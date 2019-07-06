@@ -1,6 +1,12 @@
 check_zram_mounts() {
   local FILE=/etc/ztab
   local i=0
+
+  if ! [ -f ${FILE} ]; then
+    echo "ZRAM not installed - test successful."
+    return 0
+  fi
+
   while read -r line; do
     case "$line" in
       "#"*) continue ;;
@@ -25,6 +31,8 @@ check_zram_mounts() {
             ;;
     esac
   done < "$FILE"
-  echo "ZRAM testing successful"
+  echo "ZRAM successfully installed."
+
+  return 0
 }
 
