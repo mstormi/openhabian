@@ -14,16 +14,14 @@ check_zram_mounts() {
       *)    set -- $line
             TYPE=$1
             if [ "${TYPE}" == "swap" ]; then
-              if [ -z "`/sbin/swapon | /bin/grep zram`" ]; then
-                echo "`basename $0` error: swap not on zram"
+		    if [ -z "$(/sbin/swapon | /bin/grep zram)" ]; then
+                echo "$(basename $0) error: swap not on zram"
                 return 1
               fi
             else
               OVERLAY=$5
-              LOWER=$6
-              MOUNT=`zramctl "/dev/zram${i}" | awk '/zram/ { print $NF }'`
-              if [ "`df ${OVERLAY} | awk '/overlay/ { print $1 }'`" != "overlay${i}" ]; then
-                echo "`basename $0` error: overlay${i} not found"
+              if [ "$(df ${OVERLAY} | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
+                echo "$(basename $0) error: overlay${i} not found"
                 return 1
               fi
             fi
