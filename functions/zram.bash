@@ -8,20 +8,20 @@ check_zram_mounts() {
   fi
 
   while read -r line; do
-    case "$line" in
+    case "${line}" in
       "#"*) continue ;;
       "")   continue ;;
-      *)    set -- $line
+      *)    set -- "${line}"
             TYPE=$1
             if [ "${TYPE}" == "swap" ]; then
-		    if [ -z "$(/sbin/swapon | /bin/grep zram)" ]; then
-                echo "$(basename $0) error: swap not on zram"
+	      if $\(/sbin/swapon | /bin/grep -q zram\); then
+                echo "$(basename "$0") error: swap not on zram"
                 return 1
               fi
             else
               OVERLAY=$5
-              if [ "$(df ${OVERLAY} | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
-                echo "$(basename $0) error: overlay${i} not found"
+              if [ "$(df "${OVERLAY}" | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
+                echo "$(basename "$0") error: overlay${i} not found"
                 return 1
               fi
             fi
