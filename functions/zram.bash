@@ -11,7 +11,7 @@ check_zram_mounts() {
     case "${line}" in
       "#"*) continue ;;
       "")   continue ;;
-      *)    set -- "${line}"
+      *)    set -- $\{line\}
             TYPE=$1
             if [ "${TYPE}" == "swap" ]; then
 	      if $\(/sbin/swapon | /bin/grep -q zram\); then
@@ -19,8 +19,7 @@ check_zram_mounts() {
                 return 1
               fi
             else
-              OVERLAY=$5
-              if [ "$(df "${OVERLAY}" | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
+              if [ "$(df $5 | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
                 echo "$(basename "$0") error: overlay${i} not found"
                 return 1
               fi
