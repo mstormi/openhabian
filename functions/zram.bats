@@ -10,20 +10,21 @@ check_zram_mounts() {
     echo "ZRAM not installed - test successful."
     return 0
   fi
-
   while read -r line; do
     case "${line}" in
       "#"*) continue ;;
       "")   continue ;;
-      *)    set -- $\{line\}
+      *)    set -- ${line}
             TYPE=$1
+	    TARGET=$5
+	    echo "$(swapon | grep -q zram)"; echo $?
             if [ "${TYPE}" == "swap" ]; then
-	      if $\(/sbin/swapon | /bin/grep -q zram\); then
+	      if [ $(swapon | grep -q zram) ]; then
                 echo "$(basename "$0") error: swap not on zram"
                 return 1
               fi
             else
-              if [ "$(df $5 | awk '/overlay/ { print $1 }')" != "overlay${i}" ]; then
+              if [ "$(df $5 | awk '/overlay/ { print $1 }' | tr -d '0-9')" != "overlay" ]; then
                 echo "$(basename "$0") error: overlay${i} not found"
                 return 1
               fi
@@ -45,7 +46,6 @@ check_zram_mounts() {
 
 @test "destructive-zram" {
   run init_zram_mounts install
-
   run check_zram_mounts
   [ "$status" -eq 0 ]
   [[ $output == *"success"* ]]

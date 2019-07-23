@@ -7,7 +7,7 @@ init_zram_mounts() {
     /usr/bin/git clone -b ${BRANCH} ${ZRAMGIT} ${TMP}
     cd ${TMP}
     /bin/sh ./install.sh
-    /usr/bin/install -m 644 ${BASEDIR}/includes/ztab /etc/ztab
+    /usr/bin/install -m 644 ${BASEDIR:=/opt/openhabian}/includes/ztab /etc/ztab
     service zram-config start
     rm -rf "$TMP"
   else
